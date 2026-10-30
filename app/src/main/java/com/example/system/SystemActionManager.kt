@@ -4,10 +4,14 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.BatteryManager
 import android.provider.Settings
 import com.example.data.model.Language
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class SystemActionManager(private val context: Context) {
 
@@ -138,6 +142,54 @@ class SystemActionManager(private val context: Context) {
             } catch (err: Exception) {
                 ActionResult(false, "Unable to launch YouTube, Boss.", "YouTube Launch Failed")
             }
+        }
+    }
+
+    private var isFlashlightOn = false
+
+    fun toggleFlashlight(forceState: Boolean? = null): ActionResult {
+        return try {
+            val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+            val cameraId = cameraManager?.cameraIdList?.firstOrNull()
+            if (cameraManager != null && cameraId != null) {
+                val targetState = forceState ?: !isFlashlightOn
+                cameraManager.setTorchMode(cameraId, targetState)
+                isFlashlightOn = targetState
+                val stateText = if (targetState) "ON" else "OFF"
+                ActionResult(true, "Flashlight turned $stateText, Boss.", "Flashlight $stateText")
+            } else {
+                ActionResult(false, "Flashlight hardware not available on this device, Boss.", "Torch Unavailable")
+            }
+        } catch (e: Exception) {
+            ActionResult(false, "Torch control error: ${e.localizedMessage ?: "Device busy"}", "Torch Error")
+        }
+    }
+
+    fun getCurrentDateTime(language: Language): ActionResult {
+        val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date())
+        val dateFormat = SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault()).format(Date())
+        val spoken = when (language) {
+            Language.HINDI -> "बॉस, अभी समय $timeFormat है, और आज $dateFormat है।"
+            Language.BENGALI -> "বস, এখন সময় $timeFormat, এবং আজকের তারিখ $dateFormat।"
+            Language.ENGLISH -> "Boss, the time is $timeFormat on $dateFormat."
+        }
+        return ActionResult(true, spoken, "Time & Date: $timeFormat")
+    }
+
+    fun openBrowser(url: String = "https://www.google.com"): ActionResult {
+        return try {
+            val targetUri = if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                Uri.parse("https://$url")
+            } else {
+                Uri.parse(url)
+            }
+            val intent = Intent(Intent.ACTION_VIEW, targetUri).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+            ActionResult(true, "Opening web browser, Boss.", "Web Browser")
+        } catch (e: Exception) {
+            ActionResult(false, "No browser installed on this device, Boss.", "Browser Error")
         }
     }
 

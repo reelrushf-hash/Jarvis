@@ -69,7 +69,7 @@ class FloatingJarvisService : Service() {
         )
 
         val notification: Notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("JARVIS AI Floating Assistant")
+            .setContentTitle("CARO LINE AI Floating Assistant")
             .setContentText("Tap overlay to give voice command to Boss assistant")
             .setSmallIcon(android.R.drawable.ic_btn_speak_now)
             .setContentIntent(pendingIntent)

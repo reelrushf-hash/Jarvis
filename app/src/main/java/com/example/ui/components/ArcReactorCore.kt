@@ -10,15 +10,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -40,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import com.example.ui.theme.JarvisAmber
 import com.example.ui.theme.JarvisCyan
 import com.example.ui.theme.JarvisCyanLight
-import com.example.ui.theme.JarvisRedAlert
 
 @Composable
 fun ArcReactorCore(
@@ -50,7 +52,7 @@ fun ArcReactorCore(
     onTap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Only animate when actively listening or speaking to conserve battery on 2GB RAM devices
+    // Only animate when actively listening or speaking to conserve battery
     val isActive = isListening || isSpeaking || isProcessing
     val pulseScale = if (isActive) {
         val infiniteTransition = rememberInfiniteTransition(label = "VoicePulse")
@@ -83,15 +85,15 @@ fun ArcReactorCore(
 
     val actionDescription = when {
         isListening -> "Listening to Boss command. Tap to stop."
-        isSpeaking -> "JARVIS is speaking. Tap to interrupt."
-        else -> "Activate JARVIS voice command"
+        isSpeaking -> "CARO LINE is vocalizing. Tap to interrupt."
+        else -> "Activate CARO LINE voice assistant"
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        // Outer interactive cyan circular JARVIS button
+        // Outer interactive cyan circular button
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -118,21 +120,8 @@ fun ArcReactorCore(
                     .border(1.5.dp, coreBorderColor.copy(alpha = 0.6f), CircleShape)
             ) {
                 when {
-                    isListening -> {
-                        Icon(
-                            imageVector = Icons.Default.Mic,
-                            contentDescription = "Listening",
-                            tint = JarvisCyanLight,
-                            modifier = Modifier.size(42.dp)
-                        )
-                    }
-                    isSpeaking -> {
-                        Icon(
-                            imageVector = Icons.Default.VolumeUp,
-                            contentDescription = "Speaking",
-                            tint = JarvisAmber,
-                            modifier = Modifier.size(42.dp)
-                        )
+                    isListening || isSpeaking -> {
+                        VoiceWaveform(color = coreBorderColor)
                     }
                     isProcessing -> {
                         Text(
@@ -147,7 +136,7 @@ fun ArcReactorCore(
                     else -> {
                         Icon(
                             imageVector = Icons.Default.Mic,
-                            contentDescription = "JARVIS Idle",
+                            contentDescription = "CARO LINE Idle",
                             tint = JarvisCyan,
                             modifier = Modifier.size(38.dp)
                         )
@@ -181,5 +170,54 @@ fun ArcReactorCore(
             fontFamily = FontFamily.Monospace,
             letterSpacing = 1.5.sp
         )
+    }
+}
+
+@Composable
+fun VoiceWaveform(
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "WaveformBars")
+    val h1 by infiniteTransition.animateFloat(
+        initialValue = 8f, targetValue = 26f,
+        animationSpec = infiniteRepeatable(tween(350, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "w1"
+    )
+    val h2 by infiniteTransition.animateFloat(
+        initialValue = 18f, targetValue = 36f,
+        animationSpec = infiniteRepeatable(tween(420, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "w2"
+    )
+    val h3 by infiniteTransition.animateFloat(
+        initialValue = 24f, targetValue = 12f,
+        animationSpec = infiniteRepeatable(tween(300, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "w3"
+    )
+    val h4 by infiniteTransition.animateFloat(
+        initialValue = 14f, targetValue = 32f,
+        animationSpec = infiniteRepeatable(tween(480, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "w4"
+    )
+    val h5 by infiniteTransition.animateFloat(
+        initialValue = 10f, targetValue = 20f,
+        animationSpec = infiniteRepeatable(tween(380, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "w5"
+    )
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        listOf(h1, h2, h3, h4, h5).forEach { barHeight ->
+            Box(
+                modifier = Modifier
+                    .width(3.5.dp)
+                    .height(barHeight.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(color)
+            )
+        }
     }
 }

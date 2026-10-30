@@ -36,5 +36,8 @@ enum class ActionType {
     SAVE_FACT,
     RECALL_FACT,
     ADD_TASK,
-    DEVICE_STATUS
+    DEVICE_STATUS,
+    TOGGLE_FLASHLIGHT,
+    TIME_DATE,
+    OPEN_BROWSER
 }

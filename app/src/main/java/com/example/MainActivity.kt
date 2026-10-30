@@ -234,7 +234,7 @@ fun JarvisApp(viewModel: JarvisViewModel) {
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
-                        text = "JARVIS VAULT & SETTINGS",
+                        text = "CARO LINE VAULT & SETTINGS",
                         color = JarvisCyan,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,

@@ -107,7 +107,7 @@ fun MainHudScreen(
             // Brand Logo & Status
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "J.A.R.V.I.S.",
+                    text = "CARO LINE AI",
                     color = JarvisCyan,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Black,
@@ -285,7 +285,7 @@ fun MainHudScreen(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "JARVIS",
+                            text = "CARO LINE",
                             color = JarvisCyan,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,

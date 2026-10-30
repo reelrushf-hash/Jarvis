@@ -307,6 +307,34 @@ class JarvisViewModel(application: Application) : AndroidViewModel(application) 
                 ActionType.RECALL_FACT -> {
                     // Handled directly in OfflineBrain
                 }
+                ActionType.TOGGLE_FLASHLIGHT -> {
+                    val force = if (extra == "ON") true else if (extra == "OFF") false else null
+                    val result = systemActionManager.toggleFlashlight(force)
+                    _uiState.value = _uiState.value.copy(
+                        lastResponse = result.spokenFeedback,
+                        lastBrainUsed = "Torch Control"
+                    )
+                    repository.logConversation("CARO LINE", result.spokenFeedback, _uiState.value.currentLanguage, "Torch Control")
+                    speakOut(result.spokenFeedback)
+                }
+                ActionType.TIME_DATE -> {
+                    val result = systemActionManager.getCurrentDateTime(_uiState.value.currentLanguage)
+                    _uiState.value = _uiState.value.copy(
+                        lastResponse = result.spokenFeedback,
+                        lastBrainUsed = "Clock & Calendar"
+                    )
+                    repository.logConversation("CARO LINE", result.spokenFeedback, _uiState.value.currentLanguage, "Clock & Calendar")
+                    speakOut(result.spokenFeedback)
+                }
+                ActionType.OPEN_BROWSER -> {
+                    val result = systemActionManager.openBrowser()
+                    _uiState.value = _uiState.value.copy(
+                        lastResponse = result.spokenFeedback,
+                        lastBrainUsed = "Browser Action"
+                    )
+                    repository.logConversation("CARO LINE", result.spokenFeedback, _uiState.value.currentLanguage, "Browser Action")
+                    speakOut(result.spokenFeedback)
+                }
             }
         }
     }

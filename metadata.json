@@ -1,6 +1,6 @@
 {
-  "name": "JARVIS AI",
-  "description": "JARVIS AI — Boss Personal Assistant: Offline-first voice assistant in Hindi, English, and Bengali with 500 MB local memory, phone actions, and optional AI.",
+  "name": "CARO LINE AI",
+  "description": "CARO LINE AI — Advanced Personal JARVIS Assistant: Multilingual voice assistant in Hindi, Hinglish, English, and Bangla with offline system actions, torch, calls, and memory.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

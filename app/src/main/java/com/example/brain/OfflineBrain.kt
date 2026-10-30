@@ -41,6 +41,37 @@ class OfflineBrain(
             return BrainDecision.SpokenAnswer(answer, "Offline Brain")
         }
 
+        // Flashlight / Torch ("Jarvis, torch on karo", "flashlight on/off")
+        if (isTorchCommand(lower)) {
+            val isOff = lower.contains("off") || lower.contains("band") || lower.contains("बंद") || lower.contains("বন্ধ")
+            val targetState = if (isOff) "OFF" else "ON"
+            return BrainDecision.ExecuteAction(
+                actionType = ActionType.TOGGLE_FLASHLIGHT,
+                extraData = targetState,
+                spokenResponse = if (isOff) "Turning torch off, Boss." else "Turning torch on, Boss."
+            )
+        }
+
+        // Date and Time ("Abhi kitne baje hain?", "what time is it", "এখন কয়টা বাজে")
+        if (isDateTimeQuery(lower)) {
+            return BrainDecision.ExecuteAction(
+                actionType = ActionType.TIME_DATE,
+                spokenResponse = "Checking current time and date, Boss."
+            )
+        }
+
+        // Open Browser ("আমার ব্রাউজার খোলো", "open browser")
+        if (isBrowserCommand(lower)) {
+            return BrainDecision.ExecuteAction(
+                actionType = ActionType.OPEN_BROWSER,
+                spokenResponse = when (language) {
+                    Language.HINDI -> "ब्राउज़र खोल रहा हूँ, बॉस।"
+                    Language.BENGALI -> "ব্রাউজার ওপেন করছি, বস।"
+                    Language.ENGLISH -> "Opening web browser, Boss."
+                }
+            )
+        }
+
         // 3. Phone Call Commands
         extractCallTarget(lower, input)?.let { target ->
             return BrainDecision.RequireConfirmation(
@@ -368,5 +399,33 @@ class OfflineBrain(
         }
 
         return null
+    }
+
+    private fun isTorchCommand(text: String): Boolean {
+        val keywords = listOf(
+            "torch", "flashlight",
+            "टॉर्च", "टार्च", "लाइट",
+            "টর্চ", "ফ্ল্যাশলাইট"
+        )
+        return keywords.any { text.contains(it) }
+    }
+
+    private fun isDateTimeQuery(text: String): Boolean {
+        val keywords = listOf(
+            "kitne baje", "kya time", "what time", "what is the time", "current time",
+            "date today", "what is today's date", "tarikh", "aaj ki tarikh",
+            "कितने बजे", "समय क्या", "तारीख",
+            "কয়টা বাজে", "সময় কত", "আজকের তারিখ"
+        )
+        return keywords.any { text.contains(it) }
+    }
+
+    private fun isBrowserCommand(text: String): Boolean {
+        val keywords = listOf(
+            "browser", "chrome",
+            "ब्राउज़र", "क्रोम", "इंटरनेट खोलो",
+            "ব্রাউজার", "ক্রোম"
+        )
+        return keywords.any { text.contains(it) }
     }
 }
